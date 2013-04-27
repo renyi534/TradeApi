@@ -1,7 +1,6 @@
 #pragma once
 #include ".\ThostTraderApi\ThostFtdcMdApi.h"
 #include "stdafx.h"
-#include "OneMinuteData.h"
 #include <map>
 #include <vector>
 #include <iostream>
@@ -9,13 +8,10 @@
 
 
 using namespace std;
-class DbConn;
-class KSeriesGenerator;
-struct TradeConn;
 class CMdSpi : public CThostFtdcMdSpi
 {
 public:
-	CMdSpi(CThostFtdcMdApi* api, string, string, string, TradeConn*);
+	CMdSpi(CThostFtdcMdApi* api, string, string, string);
 	~CMdSpi();
 	///´íÎóÓ¦´ð
 	virtual void OnRspError(CThostFtdcRspInfoField *pRspInfo,
@@ -56,30 +52,16 @@ public:
 private:
 
 	void ReqUserLogin();
-	void SubscribeMarketData();
+	void SubscribeMarketData(char *ppInstrumentID[], int);
 	// 
 	bool IsErrorRspInfo(CThostFtdcRspInfoField *pRspInfo);
 	// UserApi¶ÔÏó
 	CThostFtdcMdApi* m_pUserApi;
 
-
-	typedef map<string,CThostFtdcDepthMarketDataField> CTickDataMap;	
-	typedef pair<string,CThostFtdcDepthMarketDataField> CTickDataPair;
-	CTickDataMap m_tick_data_map;
-
-
-	ofstream m_log;
 	int m_requestID;
-	friend class CTradeSystemView;
 
-	vector<KSeriesGenerator*> m_series_generator;
 	string m_BrokerId;
 	string m_InvestorId;
 	string m_Passwd;
-	TradeConn* m_Conn;
-	bool m_StoreMarketData;
-	static bool StoreMarketData;
 	bool m_ConnStatus;
-	CRITICAL_SECTION		m_data_critsec;
-	
 };
